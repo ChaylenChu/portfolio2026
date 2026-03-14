@@ -29,7 +29,7 @@ export default function About() {
 
           <p className="text-sm md:text-[0.95rem] leading-relaxed text-neutral-300 font-extralight tracking-wide">
          
-          Holding a Master’s degree in Electronic Music Composition from the Zhejiang Conservatory of Music, Chaylen specializes in Acousmatic Music and the development of Interactive Sonic Systems. His expertise lies in the architecture of game audio interactions and the craft of bespoke sound design, integrating rigorous algorithmic logic with emotive sonic landscapes.
+          Holding a Master’s degree in Electronic Music Composition from the Zhejiang Conservatory of Music, Chaylen specializes in Acousmatic Music and the development of Interactive Sonic Systems. Her expertise lies in the architecture of game audio interactions and the craft of bespoke sound design, integrating rigorous algorithmic logic with emotive sonic landscapes.
           </p>
 
          <div className="space-y-8">
