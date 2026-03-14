@@ -3,138 +3,101 @@ import { X } from 'lucide-react'
 
 export default function MediaModal({ work, onClose }) {
   useEffect(() => {
-    const handleEscape = (e) => e.key === 'Escape' && onClose()
-    document.addEventListener('keydown', handleEscape)
     document.body.style.overflow = 'hidden'
-    return () => {
-      document.removeEventListener('keydown', handleEscape)
-      document.body.style.overflow = ''
-    }
-  }, [onClose])
+    return () => { document.body.style.overflow = 'auto' }
+  }, [])
 
-  const tools = Array.isArray(work.tools) ? work.tools : []
+  if (!work) return null
 
-  // 辅助判断：是否应该作为视频播放
-  const isVideo = 
-    (work.mediaUrl && work.mediaUrl.toLowerCase().endsWith('.mp4')) || 
-    (work.type && work.type.toLowerCase().includes('video')) ||
-    (work.type && work.type.toLowerCase().includes('music')) ||
-    (work.type && work.type.toLowerCase().includes('electronic'))
+  const isAudio = work.mediaUrl?.endsWith('.m4a') || work.type === 'audio'
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 bg-black/90 backdrop-blur-xl overflow-y-auto"
-      onClick={onClose}
-    >
-      <div
-        className="relative w-full max-w-6xl bg-neutral-950 text-neutral-100 rounded-sm overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.9)] border border-white/5"
-        onClick={(e) => e.stopPropagation()}
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 px-4 py-6 backdrop-blur-sm sm:p-10">
+      {/* 关闭按钮 - 确保高层级和白线显示 */}
+      <button
+        onClick={onClose}
+        className="fixed right-6 top-6 z-[110] p-2 text-white/50 hover:text-white transition-colors focus:outline-none"
+        aria-label="Close modal"
       >
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-4 right-4 z-20 p-2 text-neutral-200 hover:text-white hover:bg-white/10 rounded-full transition-colors"
-          aria-label="关闭"
-        >
-          <X size={22} />
-        </button>
+        <X size={32} strokeWidth={1} />
+      </button>
 
-        {/* Media 播放区域 */}
-        <div className="bg-black">
-          <div className="aspect-[16/9] md:aspect-[21/9] flex items-center justify-center overflow-hidden">
-            {isVideo ? (
-              work.mediaUrl ? (
-                <video
-                  key={work.mediaUrl} // 切换作品时重置播放器
-                  src={work.mediaUrl}
-                  controls
-                  autoPlay
-                  muted       // 必须静音才能在浏览器自动播放
-                  playsInline // 适配移动端
-                  loop 
-                  className="w-full h-full object-contain"
-                />
-              ) : (
-                <p className="text-neutral-500 text-sm tracking-widest uppercase">Video Preview Unavailable</p>
-              )
-            ) : work.mediaUrl ? (
-              <audio
-                src={work.mediaUrl}
-                controls
-                className="w-full max-w-xl px-6"
-              />
+      <div className="relative h-full w-full max-w-6xl overflow-y-auto bg-black scrollbar-hide">
+        {/* 媒体展示区 */}
+        <div className="aspect-video w-full bg-neutral-900 shadow-2xl">
+          {work.mediaUrl ? (
+            isAudio ? (
+              <div className="flex h-full flex-col items-center justify-center bg-neutral-950 p-8 text-center">
+                <img src={work.cover} alt="" className="mb-8 h-48 w-48 object-cover opacity-50 shadow-2xl grayscale" />
+                <audio controls className="w-full max-w-md accent-white">
+                  <source src={work.mediaUrl} type="audio/x-m4a" />
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
             ) : (
-              <p className="text-neutral-500 text-sm tracking-widest uppercase">Content Unavailable</p>
-            )}
-          </div>
+              <video controls autoPlay className="h-full w-full object-contain">
+                <source src={work.mediaUrl} type="video/mp4" />
+              </video>
+            )
+          ) : (
+            <div className="flex h-full items-center justify-center text-neutral-600 italic">
+              Coming soon
+            </div>
+          )}
         </div>
 
-        {/* 详情描述区域 */}
-        <div className="px-6 sm:px-10 py-8 md:py-12 bg-neutral-950">
-          <div className="grid gap-12 md:grid-cols-[1.4fr_1fr]">
-            
-            {/* 左侧：文字叙述 */}
-            <div className="space-y-10">
-              <header className="space-y-4">
-                <p className="text-[10px] uppercase tracking-[0.4em] text-neutral-500 font-light">
-                  {work.year} · {work.type}
-                </p>
-                <h2 className="text-2xl md:text-4xl font-extralight tracking-[0.1em] text-white">
-                  {work.title}
-                </h2>
-              </header>
+        {/* 内容区域 - 强制左右布局 */}
+        <div className="mt-12 flex flex-col gap-16 pb-20 md:flex-row md:items-start md:justify-between">
+          
+          {/* 左侧：About */}
+          <div className="flex-1 space-y-8">
+            <header>
+              <p className="text-[11px] uppercase tracking-[0.3em] text-neutral-500">
+                {work.year} · {work.type}
+              </p>
+              <h2 className="mt-4 text-3xl font-extralight tracking-tight text-white sm:text-4xl">
+                {work.title}
+              </h2>
+            </header>
 
-              {work.about && (
-                <section className="space-y-4">
-                  <h3 className="text-[10px] uppercase tracking-[0.3em] text-neutral-600 font-medium">
-                    About the Project
-                  </h3>
-                  <p className="text-sm md:text-base leading-relaxed text-neutral-300 font-extralight tracking-wide">
-                    {work.about}
-                  </p>
-                </section>
-              )}
+            <div className="max-w-2xl">
+              <h3 className="mb-6 text-[11px] uppercase tracking-[0.2em] text-neutral-400">About the Project</h3>
+              <p className="text-sm font-light leading-relaxed text-neutral-300 sm:text-base">
+                {work.about}
+              </p>
             </div>
+          </div>
 
-            {/* 右侧：技术信息 */}
-            <aside className="space-y-8 md:pl-8 border-t md:border-t-0 md:border-l border-white/5 pt-10 md:pt-0">
+          {/* 右侧：Technical Sheet (固定宽度，防止掉下去) */}
+          <div className="w-full shrink-0 space-y-10 md:w-80">
+            <div>
+              <h3 className="mb-6 text-[11px] uppercase tracking-[0.2em] text-neutral-400">Technical Sheet</h3>
               <div className="space-y-6">
-                <h3 className="text-[10px] uppercase tracking-[0.3em] text-neutral-600 font-medium">
-                  Technical Sheet
-                </h3>
-
-                {tools.length > 0 && (
-                  <div className="space-y-3">
-                    <p className="text-[9px] uppercase tracking-[0.2em] text-neutral-500">Tools</p>
-                    <div className="flex flex-wrap gap-2">
-                      {tools.map((tool) => (
-                        <span
-                          key={tool}
-                          className="px-3 py-1 text-[11px] font-extralight tracking-wider border border-white/10 text-neutral-400 rounded-full"
-                        >
-                          {tool}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {work.role && (
-                  <div className="space-y-2">
-                    <p className="text-[9px] uppercase tracking-[0.2em] text-neutral-500">Role</p>
-                    <p className="text-sm text-neutral-300 font-extralight tracking-wide">{work.role}</p>
-                  </div>
-                )}
-
+                <div>
+                  <p className="text-[10px] uppercase tracking-widest text-neutral-600 mb-2">Role</p>
+                  <p className="text-sm font-light text-neutral-300">{work.role}</p>
+                </div>
                 {work.visualCollaborator && (
-                  <div className="space-y-2">
-                    <p className="text-[9px] uppercase tracking-[0.2em] text-neutral-500">Visual Collaboration</p>
-                    <p className="text-sm text-neutral-300 font-extralight tracking-wide">{work.visualCollaborator}</p>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-widest text-neutral-600 mb-2">Visual Collaborator</p>
+                    <p className="text-sm font-light text-neutral-300">{work.visualCollaborator}</p>
                   </div>
                 )}
               </div>
-            </aside>
+            </div>
+
+            <div>
+              <h3 className="mb-6 text-[11px] uppercase tracking-[0.2em] text-neutral-400">Tools</h3>
+              <div className="flex flex-wrap gap-2">
+                {work.tools?.map((tool) => (
+                  <span key={tool} className="border border-neutral-800 px-3 py-1 text-[10px] tracking-wider text-neutral-400">
+                    {tool}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
+
         </div>
       </div>
     </div>
