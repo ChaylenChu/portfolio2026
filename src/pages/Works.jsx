@@ -8,7 +8,7 @@ const works = [
     year: '2025.05',
     type: 'Interactive Electronic Music',
     cover: '/assets/covers/xingdun.png',
-    mediaUrl: '/assets/video/xingdun_final_v4.mp4',
+    mediaUrl: '/assets/video/xingdun_final_v5.mp4',
     description: '手部数据交互与电子音乐',
     // About the Project：在弹窗左侧「About the Project」区块显示
     about: 'Xing Dun Form Escape explores the threshold between the tangible and the intangible. Driven by hand gestures, the work deconstructs the physical Form into abstract digital particles, while the haunting vocals remain as the lingering Spirit. It is a journey from geometric order to mathematical chaos, ultimately returning to a digital-age realization: Seeing the mountain as the mountain once again.',
